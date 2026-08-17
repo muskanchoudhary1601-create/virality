@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { Tag, Copy, Check, Search, TrendingUp, Sparkles, HelpCircle } from 'lucide-react';
 
-export default function HashtagAndSeoOptimizer({ tagCategories, seoScore, platform, title, niche }) {
+export default function HashtagAndSeoOptimizer({ tagCategories = { viral: [], niche: [], specific: [] }, seoScore, platform = 'shorts', title = '', niche = 'General' }) {
   const [copiedTag, setCopiedTag] = useState(null);
   const [copiedAll, setCopiedAll] = useState(false);
 
+  const viralTags = tagCategories?.viral || [];
+  const nicheTags = tagCategories?.niche || [];
+  const specificTags = tagCategories?.specific || [];
+
+  const hasTags = viralTags.length > 0 || nicheTags.length > 0 || specificTags.length > 0;
+  const hasTitle = Boolean(title && title.trim());
+
   const allTags = [
-    ...tagCategories.viral,
-    ...tagCategories.niche,
-    ...tagCategories.specific
+    ...viralTags,
+    ...nicheTags,
+    ...specificTags
   ].join(' ');
 
   const handleCopyTag = (tag) => {
@@ -24,11 +31,11 @@ export default function HashtagAndSeoOptimizer({ tagCategories, seoScore, platfo
   };
 
   // 3 High-CTR Title alternatives
-  const titleVariations = [
-    `The Only ${niche} Video You Need to Watch in 2026`,
-    `Why 99% Fail at ${niche} (And How to Fix It)`,
-    `I Tried ${title || 'This Method'} For 30 Days — The Results Shocked Me`
-  ];
+  const titleVariations = hasTitle ? [
+    `The Only ${title.slice(0, 36)} Video You Need to Watch in 2026`,
+    `Why 99% Fail at ${title.slice(0, 36)} (And How to Fix It)`,
+    `I Tried ${title.slice(0, 32)} For 30 Days — The Results Shocked Me`
+  ] : [];
 
   return (
     <div className="grid-2">
@@ -45,78 +52,105 @@ export default function HashtagAndSeoOptimizer({ tagCategories, seoScore, platfo
             </p>
           </div>
 
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            onClick={handleCopyAll}
-          >
-            {copiedAll ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
-            <span>{copiedAll ? 'All Copied' : 'Copy All'}</span>
-          </button>
+          {hasTags && (
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={handleCopyAll}
+            >
+              {copiedAll ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+              <span>{copiedAll ? 'All Copied' : 'Copy All'}</span>
+            </button>
+          )}
         </div>
 
-        {/* Viral Tier */}
-        <div style={{ marginBottom: '1rem' }}>
-          <div style={{ fontSize: '0.775rem', fontWeight: '700', color: 'var(--brand-primary)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-            🔥 Tier 1: High-Volume Broad Discovery
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {tagCategories.viral.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className="preset-chip"
-                onClick={() => handleCopyTag(tag)}
-                style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
-              >
-                <span>{tag}</span>
-                {copiedTag === tag ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
-              </button>
-            ))}
-          </div>
-        </div>
+        {hasTags ? (
+          <>
+            {/* Viral Tier */}
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.775rem', fontWeight: '700', color: 'var(--brand-primary)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                🔥 Tier 1: High-Volume Broad Discovery
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                {viralTags.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className="preset-chip"
+                    onClick={() => handleCopyTag(tag)}
+                    style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
+                  >
+                    <span>{tag}</span>
+                    {copiedTag === tag ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        {/* Niche Tier */}
-        <div style={{ marginBottom: '1rem' }}>
-          <div style={{ fontSize: '0.775rem', fontWeight: '700', color: 'var(--brand-emerald)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-            🎯 Tier 2: Niche Categorization
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {tagCategories.niche.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className="preset-chip"
-                onClick={() => handleCopyTag(tag)}
-                style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
-              >
-                <span>{tag}</span>
-                {copiedTag === tag ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
-              </button>
-            ))}
-          </div>
-        </div>
+            {/* Niche Tier */}
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.775rem', fontWeight: '700', color: 'var(--brand-emerald)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                🎯 Tier 2: Niche Categorization
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                {nicheTags.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className="preset-chip"
+                    onClick={() => handleCopyTag(tag)}
+                    style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
+                  >
+                    <span>{tag}</span>
+                    {copiedTag === tag ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        {/* Specific Tier */}
-        <div>
-          <div style={{ fontSize: '0.775rem', fontWeight: '700', color: 'var(--brand-cyan)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-            🔍 Tier 3: Search SEO & Trending
+            {/* Specific Tier */}
+            <div>
+              <div style={{ fontSize: '0.775rem', fontWeight: '700', color: 'var(--brand-cyan)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                🔍 Tier 3: Search SEO & Trending
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                {specificTags.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className="preset-chip"
+                    onClick={() => handleCopyTag(tag)}
+                    style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
+                  >
+                    <span>{tag}</span>
+                    {copiedTag === tag ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div style={{
+            padding: '2.5rem 1.5rem',
+            background: 'var(--bg-elevated)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px dashed var(--border-medium)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.65rem',
+            color: 'var(--text-muted)'
+          }}>
+            <Tag size={32} color="var(--brand-pink)" style={{ opacity: 0.8 }} />
+            <div style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+              Hashtag Stack Awaiting Video Input
+            </div>
+            <div style={{ fontSize: '0.8rem', maxWidth: '340px', color: 'var(--text-secondary)' }}>
+              Enter your video topic, spoken hook, or caption above to generate custom 3-tier hashtags.
+            </div>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {tagCategories.specific.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className="preset-chip"
-                onClick={() => handleCopyTag(tag)}
-                style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
-              >
-                <span>{tag}</span>
-                {copiedTag === tag ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
-              </button>
-            ))}
-          </div>
-        </div>
+        )}
       </div>
 
       {/* High-CTR Title & SEO Optimization */}
@@ -131,39 +165,63 @@ export default function HashtagAndSeoOptimizer({ tagCategories, seoScore, platfo
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          {titleVariations.map((titleText, idx) => (
-            <div
-              key={idx}
-              style={{
-                background: 'var(--bg-elevated)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-md)',
-                padding: '0.75rem 1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '0.75rem'
-              }}
-            >
-              <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--text-primary)' }}>
-                "{titleText}"
-              </div>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                onClick={() => {
-                  navigator.clipboard.writeText(titleText);
-                  setCopiedTag(`title-${idx}`);
-                  setTimeout(() => setCopiedTag(null), 1500);
+        {hasTitle ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
+            {titleVariations.map((titleText, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.75rem 1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem'
                 }}
               >
-                {copiedTag === `title-${idx}` ? <Check size={13} color="#10b981" /> : <Copy size={13} />}
-                <span>{copiedTag === `title-${idx}` ? 'Copied' : 'Use'}</span>
-              </button>
+                <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                  "{titleText}"
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText(titleText);
+                    setCopiedTag(`title-${idx}`);
+                    setTimeout(() => setCopiedTag(null), 1500);
+                  }}
+                >
+                  {copiedTag === `title-${idx}` ? <Check size={13} color="#10b981" /> : <Copy size={13} />}
+                  <span>{copiedTag === `title-${idx}` ? 'Copied' : 'Use'}</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{
+            padding: '2.5rem 1.5rem',
+            background: 'var(--bg-elevated)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px dashed var(--border-medium)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.65rem',
+            color: 'var(--text-muted)',
+            marginBottom: '1.25rem'
+          }}>
+            <Search size={32} color="var(--brand-primary)" style={{ opacity: 0.8 }} />
+            <div style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+              High-CTR Titles Awaiting Video Title
             </div>
-          ))}
-        </div>
+            <div style={{ fontSize: '0.8rem', maxWidth: '340px', color: 'var(--text-secondary)' }}>
+              Enter your video title or concept in the form above to generate algorithmic title variations.
+            </div>
+          </div>
+        )}
 
         <div style={{
           background: 'rgba(99, 102, 241, 0.08)',

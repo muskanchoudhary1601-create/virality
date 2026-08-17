@@ -178,7 +178,8 @@ export function generateRetentionCurve(duration = 45, hookScore = 80, pacingScor
  * Generates AI Hook Variations & Recommendations
  */
 export function generateHookSuggestions(currentHook = '', title = '', niche = 'General') {
-  const base = currentHook || title || 'The biggest secret to growth';
+  const base = (currentHook || title || '').trim();
+  if (!base) return [];
   
   return [
     {
@@ -191,7 +192,7 @@ export function generateHookSuggestions(currentHook = '', title = '', niche = 'G
     {
       type: 'Contrarian / Hot Take',
       tag: '⚡ High Comments Velocity',
-      hook: `Stop doing ${base.slice(0, 30)}... it is destroying your results.`,
+      hook: `Stop doing ${base.slice(0, 32)}... it is destroying your results.`,
       predictedHookScore: 91,
       whyItWorks: 'Directly challenges common consensus, sparking immediate comment debate.'
     },
@@ -280,21 +281,11 @@ export function calculateViralityAnalysis(data = {}) {
         benchmark: [],
         markers: []
       },
-      hookSuggestions: generateHookSuggestions('', '', niche),
+      hookSuggestions: [],
       tagCategories: {
-        viral: [`#fyp`, `#viral`, `#trending`, `#foryoupage`, `#explore`],
-        niche: [
-          `#${niche.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
-          `#${niche.toLowerCase().replace(/[^a-z0-9]/g, '')}tips`,
-          `#creators`,
-          `#growthhacks`
-        ],
-        specific: [
-          `#2026trends`,
-          `#videotips`,
-          `#contentstrategy`,
-          `#viralgrowth`
-        ]
+        viral: [],
+        niche: [],
+        specific: []
       },
       nicheBenchmark: {
         niche,

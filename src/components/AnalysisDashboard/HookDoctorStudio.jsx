@@ -40,68 +40,91 @@ export default function HookDoctorStudio({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-elevated)', padding: '0.4rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Active Hook:</span>
-          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-primary)', maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            "{currentHook || 'Default Hook'}"
+          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: currentHook ? 'var(--text-primary)' : 'var(--text-muted)', maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {currentHook ? `"${currentHook}"` : 'None (Awaiting Input)'}
           </span>
         </div>
       </div>
 
       {/* AI Suggestions Grid */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.75rem' }}>
-        {hookSuggestions.map((item, idx) => (
-          <div
-            key={idx}
-            className={`hook-variant-card ${selectedIdx === idx ? 'selected' : ''}`}
-            onClick={() => handleApply(item.hook, idx)}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-highlight)' }}>
-                  {item.type}
-                </span>
-                <span className="badge badge-solid" style={{ fontSize: '0.7rem' }}>
-                  {item.tag}
-                </span>
+        {hookSuggestions && hookSuggestions.length > 0 ? (
+          hookSuggestions.map((item, idx) => (
+            <div
+              key={idx}
+              className={`hook-variant-card ${selectedIdx === idx ? 'selected' : ''}`}
+              onClick={() => handleApply(item.hook, idx)}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-highlight)' }}>
+                    {item.type}
+                  </span>
+                  <span className="badge badge-solid" style={{ fontSize: '0.7rem' }}>
+                    {item.tag}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: '700', color: 'var(--brand-emerald)' }}>
+                    Score: {item.predictedHookScore}/100
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopy(item.hook, idx);
+                    }}
+                    title="Copy to clipboard"
+                  >
+                    {copiedIndex === idx ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                    <span>{copiedIndex === idx ? 'Copied' : 'Copy'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleApply(item.hook, idx);
+                    }}
+                  >
+                    <Zap size={14} />
+                    <span>Apply</span>
+                  </button>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: '700', color: 'var(--brand-emerald)' }}>
-                  Score: {item.predictedHookScore}/100
-                </span>
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCopy(item.hook, idx);
-                  }}
-                  title="Copy to clipboard"
-                >
-                  {copiedIndex === idx ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
-                  <span>{copiedIndex === idx ? 'Copied' : 'Copy'}</span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleApply(item.hook, idx);
-                  }}
-                >
-                  <Zap size={14} />
-                  <span>Apply</span>
-                </button>
-              </div>
+              <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                "{item.hook}"
+              </p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                💡 <strong>Why it works:</strong> {item.whyItWorks}
+              </p>
             </div>
-
-            <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
-              "{item.hook}"
-            </p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              💡 <strong>Why it works:</strong> {item.whyItWorks}
-            </p>
+          ))
+        ) : (
+          <div style={{
+            padding: '2.5rem 1.5rem',
+            background: 'var(--bg-elevated)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px dashed var(--border-medium)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.65rem',
+            color: 'var(--text-muted)'
+          }}>
+            <Stethoscope size={36} color="var(--brand-primary)" style={{ opacity: 0.8 }} />
+            <div style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '1.05rem' }}>
+              AI Hook Variations Awaiting Video Concept
+            </div>
+            <div style={{ fontSize: '0.85rem', maxWidth: '420px', color: 'var(--text-secondary)' }}>
+              Enter your video title, spoken hook, or select a preset in the form above to generate 5 high-converting psychological hook formulas tailored to your concept.
+            </div>
           </div>
-        ))}
+        )}
       </div>
 
       {/* Interactive Custom Hook Sandbox */}
