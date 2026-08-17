@@ -106,7 +106,9 @@ export default function ScoreOverviewCard({ analysis }) {
         </div>
 
         <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-highlight)' }}>
-          {overallScore >= 85
+          {!analysis.hasInput
+            ? 'Enter Video Details to Begin Analysis'
+            : overallScore >= 85
             ? 'High Probability of Algorithmic Breakthrough'
             : overallScore >= 65
             ? 'Strong Organic Engagement Potential'
@@ -114,7 +116,9 @@ export default function ScoreOverviewCard({ analysis }) {
         </h2>
 
         <p style={{ fontSize: '0.925rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-          {overallScore >= 85
+          {!analysis.hasInput
+            ? 'Type or paste your video title, opening hook, script, or pick a preset above to calculate real-time algorithmic predictions.'
+            : overallScore >= 85
             ? 'Hook retention and curiosity gap exceed the 90th percentile for this niche. Strong shareability indicators detected.'
             : overallScore >= 65
             ? 'Solid foundation. Applying the suggested AI hook revisions and midpoint B-roll pacing can boost reach by up to 2.4x.'

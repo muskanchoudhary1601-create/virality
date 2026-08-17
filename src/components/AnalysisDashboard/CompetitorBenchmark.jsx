@@ -17,8 +17,8 @@ export default function CompetitorBenchmark({ benchmark }) {
           </p>
         </div>
 
-        <div className="badge badge-mega" style={{ fontSize: '0.85rem' }}>
-          Top {100 - percentile}% Tier
+        <div className={`badge ${yourScore > 0 ? 'badge-mega' : 'badge-solid'}`} style={{ fontSize: '0.85rem' }}>
+          {yourScore > 0 ? `Top ${100 - percentile}% Tier` : 'Awaiting Input'}
         </div>
       </div>
 
@@ -50,8 +50,8 @@ export default function CompetitorBenchmark({ benchmark }) {
           <div style={{ fontSize: '2rem', fontWeight: '800', fontFamily: 'var(--font-display)', color: 'var(--text-highlight)', marginTop: '0.15rem' }}>
             {yourScore}
           </div>
-          <div style={{ fontSize: '0.75rem', color: yourScore >= avgNicheScore ? 'var(--brand-emerald)' : 'var(--brand-rose)', fontWeight: '600' }}>
-            {yourScore >= avgNicheScore ? `+${yourScore - avgNicheScore} pts above average` : `${avgNicheScore - yourScore} pts below average`}
+          <div style={{ fontSize: '0.75rem', color: yourScore === 0 ? 'var(--text-muted)' : yourScore >= avgNicheScore ? 'var(--brand-emerald)' : 'var(--brand-rose)', fontWeight: '600' }}>
+            {yourScore === 0 ? 'Enter video details above' : yourScore >= avgNicheScore ? `+${yourScore - avgNicheScore} pts above average` : `${avgNicheScore - yourScore} pts below average`}
           </div>
         </div>
 

@@ -6,11 +6,12 @@ export default function AbTestingSimulator({ currentHook, title }) {
   const [variantA, setVariantA] = useState(currentHook || '');
   const [variantB, setVariantB] = useState('');
 
-  const scoreA = analyzeHookStrength(variantA);
-  const scoreB = analyzeHookStrength(variantB);
+  const hasBothVariants = Boolean(variantA.trim() && variantB.trim());
+  const scoreA = variantA.trim() ? analyzeHookStrength(variantA) : 0;
+  const scoreB = variantB.trim() ? analyzeHookStrength(variantB) : 0;
 
   const diff = scoreB - scoreA;
-  const winner = diff > 0 ? 'B' : diff < 0 ? 'A' : 'TIE';
+  const winner = !hasBothVariants ? 'NONE' : diff > 0 ? 'B' : diff < 0 ? 'A' : 'TIE';
   const winConfidence = Math.min(96, Math.max(55, 50 + Math.abs(diff) * 3.5));
 
   return (
@@ -26,7 +27,7 @@ export default function AbTestingSimulator({ currentHook, title }) {
           </p>
         </div>
 
-        {winner !== 'TIE' && (
+        {hasBothVariants && winner !== 'TIE' && (
           <div className="badge badge-mega" style={{ fontSize: '0.85rem', padding: '0.4rem 0.85rem' }}>
             <Trophy size={14} />
             <span>Variant {winner} Wins ({winConfidence}% Confidence)</span>
@@ -101,7 +102,9 @@ export default function AbTestingSimulator({ currentHook, title }) {
         <CheckCircle2 size={18} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
         <div>
           <strong>Algorithm Verdict:</strong>{' '}
-          {winner === 'B'
+          {!hasBothVariants
+            ? 'Type two competing hook variations above to calculate head-to-head algorithm retention.'
+            : winner === 'B'
             ? `Variant B is predicted to hold attention +${diff} points longer due to higher curiosity polarization and clear stakes.`
             : winner === 'A'
             ? `Variant A is predicted to perform +${Math.abs(diff)} points better due to superior conciseness and punchy phrasing.`

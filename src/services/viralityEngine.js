@@ -27,10 +27,10 @@ const EMOTIONAL_TRIGGERS = {
  * Calculates Hook Strength Score (0-100)
  */
 export function analyzeHookStrength(hookText = '', firstSecondsPrompt = '') {
-  if (!hookText && !firstSecondsPrompt) return 40;
+  const text = (hookText + ' ' + firstSecondsPrompt).toLowerCase().trim();
+  if (!text) return 0;
   
-  const text = (hookText + ' ' + firstSecondsPrompt).toLowerCase();
-  let score = 50; // baseline
+  let score = 40; // baseline for non-empty text
 
   // Word count pacing check
   const words = text.split(/\s+/).filter(Boolean);
@@ -58,18 +58,23 @@ export function analyzeHookStrength(hookText = '', firstSecondsPrompt = '') {
     score += 8;
   }
 
-  return Math.min(Math.max(Math.round(score), 25), 99);
+  return Math.min(Math.max(Math.round(score), 20), 99);
 }
 
 /**
  * Calculates SEO, Hashtag & Caption Quality
  */
-export function analyzeSEO(caption = '', hashtags = [], platform = 'shorts') {
-  let score = 55;
+export function analyzeSEO(caption = '', hashtags = '', platform = 'shorts') {
   const tagList = Array.isArray(hashtags) 
     ? hashtags 
-    : hashtags.split(/[,\s#]+/).filter(Boolean);
+    : typeof hashtags === 'string'
+    ? hashtags.split(/[,\s#]+/).filter(Boolean)
+    : [];
 
+  const cap = (caption || '').trim();
+  if (!cap && tagList.length === 0) return 0;
+
+  let score = 45;
   const tagCount = tagList.length;
 
   // Tag quantity sweet spots per platform
@@ -84,68 +89,61 @@ export function analyzeSEO(caption = '', hashtags = [], platform = 'shorts') {
   }
 
   // Caption length & CTA check
-  const capLength = caption.length;
+  const capLength = cap.length;
   if (capLength > 50 && capLength < 350) {
     score += 12;
   }
-  if (caption.toLowerCase().includes('comment') || caption.toLowerCase().includes('save') || caption.toLowerCase().includes('share') || caption.toLowerCase().includes('follow')) {
+  if (cap.toLowerCase().includes('comment') || cap.toLowerCase().includes('save') || cap.toLowerCase().includes('share') || cap.toLowerCase().includes('follow')) {
     score += 10;
   }
 
-  return Math.min(Math.max(Math.round(score), 30), 98);
+  return Math.min(Math.max(Math.round(score), 20), 98);
 }
 
 /**
  * Generates Predicted Audience Retention Curve (Second by Second)
  */
-export function generateRetentionCurve(duration = 45, hookScore = 75, pacingScore = 70) {
-  const dur = Math.max(15, Math.min(duration, 180));
+export function generateRetentionCurve(duration = 45, hookScore = 80, pacingScore = 70) {
+  const dur = Math.max(duration || 45, 5);
+  const step = Math.max(1, Math.floor(dur / 15));
   const points = [];
   const benchmark = [];
-  
-  // Starting point at t=0s is 100%
-  let currentRetention = 100;
-  let benchRetention = 100;
 
-  // Drop at second 1-3 is heavily governed by Hook Score
-  const hookDrop = Math.max(3, 28 - (hookScore * 0.25));
+  // Starting hook hold at t=0
+  const baseStart = Math.min(99, Math.max(60, 50 + hookScore * 0.48));
+  const benchStart = 98;
 
-  for (let s = 0; s <= dur; s += Math.max(1, Math.floor(dur / 25))) {
-    if (s === 0) {
-      points.push({ second: 0, retention: 100 });
-      benchmark.push({ second: 0, retention: 100 });
-      continue;
+  for (let sec = 0; sec <= dur; sec += step) {
+    const progress = sec / dur;
+    
+    // Exponential retention decay curve with pacing anchor lifts
+    const decay = Math.pow(progress, 0.65) * (100 - baseStart + (100 - pacingScore) * 0.4);
+    let val = Math.max(12, baseStart - decay);
+
+    // Midpoint re-hook bonus if pacing score is high
+    if (progress > 0.4 && progress < 0.65 && pacingScore > 75) {
+      val += (pacingScore - 75) * 0.25;
     }
 
-    if (s <= 3) {
-      currentRetention = 100 - (hookDrop * (s / 3));
-      benchRetention = 100 - (6 * (s / 3));
-    } else {
-      // Natural logarithmic decay with pacing wobble
-      const decayRate = (100 - pacingScore) * 0.0035;
-      const wobble = Math.sin(s * 0.4) * 1.5;
-      currentRetention = Math.max(18, currentRetention - (decayRate * 5) + wobble);
-      benchRetention = Math.max(62, benchRetention - (0.012 * 5) + (Math.sin(s * 0.3) * 0.8));
-    }
-
-    // Re-hook boost at 50% mark if pacing is high
-    if (s > dur * 0.45 && s < dur * 0.55 && pacingScore > 75) {
-      currentRetention = Math.min(95, currentRetention + 4);
-    }
-
-    // End CTA dip
-    if (s > dur * 0.88) {
-      currentRetention = Math.max(15, currentRetention - 2.5);
-    }
+    // Benchmark top 1% curve
+    const benchDecay = Math.pow(progress, 0.8) * 22;
+    const benchVal = Math.max(76, benchStart - benchDecay);
 
     points.push({
-      second: s,
-      retention: Math.round(currentRetention * 10) / 10
+      second: sec,
+      retention: Math.min(99, Math.round(val))
     });
+
     benchmark.push({
-      second: s,
-      retention: Math.round(benchRetention * 10) / 10
+      second: sec,
+      retention: Math.min(99, Math.round(benchVal))
     });
+  }
+
+  // Ensure endpoint exists
+  if (points[points.length - 1].second !== dur) {
+    points.push({ second: dur, retention: Math.max(10, points[points.length - 1].retention - 4) });
+    benchmark.push({ second: dur, retention: 76 });
   }
 
   // Key retention dropzone markers
@@ -224,52 +222,128 @@ export function generateHookSuggestions(currentHook = '', title = '', niche = 'G
 /**
  * Master Virality Analysis Engine
  */
-export function calculateViralityAnalysis(data) {
+export function calculateViralityAnalysis(data = {}) {
   const {
     title = '',
     hook = '',
+    firstSecondsPrompt = '',
     script = '',
     caption = '',
     hashtags = '',
     platform = 'shorts',
-    duration = 42,
+    duration = 30,
     niche = 'Business & Tech',
     targetAudience = 'Creators & Entrepreneurs',
     plannedHour = 18,
-    audioTrendScore = 80
+    audioTrendScore = 50
   } = data;
 
+  const hasInput = Boolean(
+    (title && title.trim()) ||
+    (hook && hook.trim()) ||
+    (firstSecondsPrompt && firstSecondsPrompt.trim()) ||
+    (script && script.trim()) ||
+    (caption && caption.trim()) ||
+    (hashtags && hashtags.trim())
+  );
+
+  // Return zeroed/clean initial state if user has not entered content yet
+  if (!hasInput) {
+    return {
+      hasInput: false,
+      overallScore: 0,
+      performanceTier: 'Awaiting Video Input',
+      badgeClass: 'badge-solid',
+      predictedViews: '—',
+      estimatedLikes: '—',
+      estimatedShares: '—',
+      viralProbability: '—',
+      metrics: {
+        hookStrength: 0,
+        pacingRetention: 0,
+        engagementVelocity: 0,
+        trendAudio: 0,
+        seoOptimization: 0,
+        optimalTiming: 0
+      },
+      strengths: [],
+      weaknesses: [],
+      emotionalMatrix: [
+        { name: 'Curiosity', score: 0, color: '#6366f1' },
+        { name: 'Utility / Value', score: 0, color: '#10b981' },
+        { name: 'FOMO / Urgency', score: 0, color: '#f59e0b' },
+        { name: 'Relatability', score: 0, color: '#ec4899' },
+        { name: 'Shock / Awe', score: 0, color: '#06b6d4' }
+      ],
+      retentionData: {
+        points: [],
+        benchmark: [],
+        markers: []
+      },
+      hookSuggestions: generateHookSuggestions('', '', niche),
+      tagCategories: {
+        viral: [`#fyp`, `#viral`, `#trending`, `#foryoupage`, `#explore`],
+        niche: [
+          `#${niche.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+          `#${niche.toLowerCase().replace(/[^a-z0-9]/g, '')}tips`,
+          `#creators`,
+          `#growthhacks`
+        ],
+        specific: [
+          `#2026trends`,
+          `#videotips`,
+          `#contentstrategy`,
+          `#viralgrowth`
+        ]
+      },
+      nicheBenchmark: {
+        niche,
+        avgNicheScore: 58,
+        topOnePercentScore: 92,
+        yourScore: 0,
+        percentile: 0
+      },
+      metadata: {
+        title: '',
+        platform,
+        duration,
+        niche,
+        analyzedAt: new Date().toISOString()
+      }
+    };
+  }
+
   // 1. Calculate Component Scores
-  const hookScore = analyzeHookStrength(hook || title, script.slice(0, 100));
+  const hookScore = analyzeHookStrength(hook || title, (firstSecondsPrompt + ' ' + script).slice(0, 120));
   const seoScore = analyzeSEO(caption, hashtags, platform);
   
   // Engagement Velocity Score (Based on debate triggers, saves value)
-  let engagementScore = 65;
+  let engagementScore = 55;
   const combinedText = (title + ' ' + hook + ' ' + caption + ' ' + script).toLowerCase();
   if (combinedText.includes('comment') || combinedText.includes('agree') || combinedText.includes('wrong') || combinedText.includes('rate')) {
-    engagementScore += 12;
+    engagementScore += 16;
   }
-  if (combinedText.includes('save') || combinedText.includes('part 2') || combinedText.includes('link') || combinedText.includes('cheat sheet')) {
-    engagementScore += 14;
+  if (combinedText.includes('save') || combinedText.includes('part 2') || combinedText.includes('link') || combinedText.includes('cheat sheet') || combinedText.includes('template')) {
+    engagementScore += 18;
   }
-  engagementScore = Math.min(Math.max(engagementScore, 40), 96);
+  engagementScore = Math.min(Math.max(engagementScore, 35), 96);
 
   // Watch Time & Pacing Prediction
-  let pacingScore = 70;
-  if (duration <= 35) pacingScore += 12;
-  else if (duration > 90) pacingScore -= 10;
-  if (hookScore > 85) pacingScore += 8;
-  pacingScore = Math.min(Math.max(pacingScore, 35), 98);
+  let pacingScore = 60;
+  if (duration <= 35) pacingScore += 15;
+  else if (duration > 90) pacingScore -= 12;
+  if (hookScore > 80) pacingScore += 10;
+  pacingScore = Math.min(Math.max(pacingScore, 30), 98);
 
   // Trend & Audio Score
   const trendScore = audioTrendScore || (platform === 'tiktok' ? 88 : 78);
 
   // Platform Timing Score (Best times: 11am-2pm, 6pm-9pm)
-  let timingScore = 75;
+  let timingScore = 70;
   if ((plannedHour >= 11 && plannedHour <= 14) || (plannedHour >= 18 && plannedHour <= 21)) {
     timingScore = 94;
   } else if (plannedHour >= 2 && plannedHour <= 6) {
-    timingScore = 48;
+    timingScore = 45;
   }
 
   // 2. Weighted Overall Virality Score (0 - 100)
@@ -338,7 +412,7 @@ export function calculateViralityAnalysis(data) {
       desc: 'First 3 seconds command high psychological curiosity and pattern disruption.',
       impact: '+28% Retention'
     });
-  } else {
+  } else if (hookScore > 0) {
     weaknesses.push({
       title: 'Weak Opening Friction',
       desc: 'First 3 seconds lack an immediate emotional stake or visual hook trigger.',
@@ -399,19 +473,30 @@ export function calculateViralityAnalysis(data) {
       `#creators`,
       `#growthhacks`
     ],
-    specific: [`#2026trends`, `#mustwatch`, `#dailygrowth`, `#contentstrategy`]
+    specific: [
+      `#2026trends`,
+      `#${platform}tips`,
+      `#contentstrategy`,
+      `#viralgrowth`
+    ]
   };
 
-  // 9. Niche Benchmarks
-  const nicheBenchmark = {
-    niche,
-    avgNicheScore: 58,
-    topOnePercentScore: 92,
-    yourScore: overallScore,
-    percentile: Math.min(99, Math.max(10, Math.round((overallScore / 95) * 99)))
+  // 9. Niche Benchmark
+  const nicheProfiles = {
+    'Business & Tech': { avg: 58, top: 92 },
+    'Entertainment & Gaming': { avg: 65, top: 96 },
+    'Beauty & Skincare': { avg: 62, top: 94 },
+    'Fitness & Health': { avg: 55, top: 90 },
+    'Education & Finance': { avg: 54, top: 89 },
+    'Lifestyle & Vlogs': { avg: 60, top: 91 },
+    'AI & Coding': { avg: 59, top: 93 }
   };
+
+  const currentNicheProfile = nicheProfiles[niche] || { avg: 58, top: 92 };
+  const percentile = Math.min(99, Math.max(15, Math.round((overallScore / currentNicheProfile.top) * 100)));
 
   return {
+    hasInput: true,
     overallScore,
     performanceTier,
     badgeClass,
@@ -433,15 +518,19 @@ export function calculateViralityAnalysis(data) {
     retentionData,
     hookSuggestions,
     tagCategories,
-    nicheBenchmark,
+    nicheBenchmark: {
+      niche,
+      avgNicheScore: currentNicheProfile.avg,
+      topOnePercentScore: currentNicheProfile.top,
+      yourScore: overallScore,
+      percentile
+    },
     metadata: {
       title,
-      hook,
       platform,
       duration,
       niche,
-      targetAudience,
-      plannedHour
+      analyzedAt: new Date().toISOString()
     }
   };
 }

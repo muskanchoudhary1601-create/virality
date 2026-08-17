@@ -43,7 +43,7 @@ export default function StrengthsWeaknesses({ strengths, weaknesses }) {
             ))
           ) : (
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              No critical advantages detected yet. Implement the recommended fixes below to build momentum.
+              Enter video details above to scan for viral catalysts and algorithm advantages.
             </p>
           )}
         </div>
@@ -88,10 +88,9 @@ export default function StrengthsWeaknesses({ strengths, weaknesses }) {
               </div>
             ))
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--brand-emerald)', padding: '1rem' }}>
-              <Sparkles size={18} />
-              <span>Clean scan! No critical friction points or red flags detected.</span>
-            </div>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              No critical friction points detected. Enter your script above to run the full diagnostic.
+            </p>
           )}
         </div>
       </div>

@@ -6,15 +6,16 @@ export default function AbTestingPage({ defaultHook }) {
   const [hookA, setHookA] = useState(defaultHook || '');
   const [hookB, setHookB] = useState('');
 
-  const scoreA = analyzeHookStrength(hookA);
-  const scoreB = analyzeHookStrength(hookB);
+  const hasBothVariants = Boolean(hookA.trim() && hookB.trim());
+  const scoreA = hookA.trim() ? analyzeHookStrength(hookA) : 0;
+  const scoreB = hookB.trim() ? analyzeHookStrength(hookB) : 0;
 
   const wordsA = hookA.trim().split(/\s+/).filter(Boolean).length;
   const wordsB = hookB.trim().split(/\s+/).filter(Boolean).length;
 
   const diff = scoreB - scoreA;
-  const winner = diff > 0 ? 'B' : diff < 0 ? 'A' : 'TIE';
-  const confidence = Math.min(98, Math.max(52, 50 + Math.abs(diff) * 4));
+  const winner = !hasBothVariants ? 'NONE' : diff > 0 ? 'B' : diff < 0 ? 'A' : 'TIE';
+  const confidence = !hasBothVariants ? 0 : Math.min(98, Math.max(52, 50 + Math.abs(diff) * 4));
 
   return (
     <div className="fade-in">
@@ -53,7 +54,7 @@ export default function AbTestingPage({ defaultHook }) {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             <span>Word count: <strong>{wordsA} words</strong></span>
-            <span>Est. Hook Hold: <strong>{Math.min(94, 50 + scoreA * 0.45).toFixed(0)}%</strong></span>
+            <span>Est. Hook Hold: <strong>{scoreA > 0 ? `${Math.min(94, 50 + scoreA * 0.45).toFixed(0)}%` : '—'}</strong></span>
           </div>
         </div>
 
@@ -81,7 +82,7 @@ export default function AbTestingPage({ defaultHook }) {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             <span>Word count: <strong>{wordsB} words</strong></span>
-            <span>Est. Hook Hold: <strong>{Math.min(94, 50 + scoreB * 0.45).toFixed(0)}%</strong></span>
+            <span>Est. Hook Hold: <strong>{scoreB > 0 ? `${Math.min(94, 50 + scoreB * 0.45).toFixed(0)}%` : '—'}</strong></span>
           </div>
         </div>
       </div>
@@ -94,8 +95,8 @@ export default function AbTestingPage({ defaultHook }) {
             <span>Algorithm Decision Breakdown</span>
           </h3>
 
-          <span className="badge badge-mega" style={{ fontSize: '0.85rem' }}>
-            {confidence}% Statistical Confidence
+          <span className={`badge ${hasBothVariants ? 'badge-mega' : 'badge-solid'}`} style={{ fontSize: '0.85rem' }}>
+            {hasBothVariants ? `${confidence}% Statistical Confidence` : 'Awaiting Input'}
           </span>
         </div>
 
@@ -109,8 +110,10 @@ export default function AbTestingPage({ defaultHook }) {
           marginBottom: '1.5rem'
         }}>
           <strong>Summary:</strong>{' '}
-          {winner === 'B'
-            ? `Variant B outperforms Variant A by +${diff} points because it leverages a curiosity-driven percentage anchor ("99% of people fail") and establishes an immediate solution payoff.`
+          {!hasBothVariants
+            ? 'Enter two competing hook variations above to start the side-by-side algorithmic breakdown and retention prediction.'
+            : winner === 'B'
+            ? `Variant B outperforms Variant A by +${diff} points because it leverages a curiosity-driven percentage anchor and establishes an immediate solution payoff.`
             : winner === 'A'
             ? `Variant A wins by +${Math.abs(diff)} points due to higher brevity, low cognitive load, and direct actionable framing.`
             : 'Both hooks have equal calculated algorithmic momentum. Consider adding a high-stakes emotional trigger or specific timeframe.'}

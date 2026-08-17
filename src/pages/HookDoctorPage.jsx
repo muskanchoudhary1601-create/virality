@@ -129,19 +129,21 @@ export default function HookDoctorPage({ activeHook, onUpdateHook }) {
             fontSize: '3.5rem',
             fontWeight: '800',
             fontFamily: 'var(--font-display)',
-            color: hookScore >= 80 ? 'var(--brand-emerald)' : hookScore >= 60 ? 'var(--brand-amber)' : 'var(--brand-rose)',
+            color: !testHook.trim() ? 'var(--text-muted)' : hookScore >= 80 ? 'var(--brand-emerald)' : hookScore >= 60 ? 'var(--brand-amber)' : 'var(--brand-rose)',
             lineHeight: '1'
           }}>
             {hookScore}
             <span style={{ fontSize: '1.25rem', color: 'var(--text-muted)' }}>/100</span>
           </div>
 
-          <span className={`badge ${hookScore >= 80 ? 'badge-mega' : hookScore >= 60 ? 'badge-warning' : 'badge-danger'}`} style={{ marginTop: '0.5rem' }}>
-            {hookScore >= 80 ? '🔥 High Curiosity Anchor' : hookScore >= 60 ? '⚡ Moderate Retention' : '⚠️ High Scroll-Away Risk'}
+          <span className={`badge ${!testHook.trim() ? 'badge-solid' : hookScore >= 80 ? 'badge-mega' : hookScore >= 60 ? 'badge-warning' : 'badge-danger'}`} style={{ marginTop: '0.5rem' }}>
+            {!testHook.trim() ? '⚡ Awaiting Input' : hookScore >= 80 ? '🔥 High Curiosity Anchor' : hookScore >= 60 ? '⚡ Moderate Retention' : '⚠️ High Scroll-Away Risk'}
           </span>
 
           <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.75rem', maxWidth: '280px' }}>
-            {hookScore >= 80
+            {!testHook.trim()
+              ? 'Type or paste an opening hook line in the sandbox above to calculate psychological retention.'
+              : hookScore >= 80
               ? 'Opening triggers strong psychological curiosity and rapid comprehension.'
               : 'Add an emotional word, specific stakes, or a contrarian angle to spike retention.'}
           </p>

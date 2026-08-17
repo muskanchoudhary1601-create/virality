@@ -60,166 +60,193 @@ export default function RetentionCurveChart({ retentionData, duration }) {
         </div>
       </div>
 
-      {/* SVG Retention Graph */}
-      <div className="retention-chart-svg-box">
-        <svg
-          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-          style={{ width: '100%', height: '100%', overflow: 'visible' }}
-        >
-          <defs>
-            <linearGradient id="retentionGradientFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
-            </linearGradient>
-          </defs>
-
-          {/* Grid lines */}
-          {[100, 75, 50, 25, 0].map((level) => {
-            const y = getY(level);
-            return (
-              <g key={level}>
-                <line
-                  x1={padding.left}
-                  y1={y}
-                  x2={svgWidth - padding.right}
-                  y2={y}
-                  stroke="rgba(255, 255, 255, 0.07)"
-                  strokeDasharray={level === 0 ? '0' : '4,4'}
-                />
-                <text
-                  x={padding.left - 10}
-                  y={y + 4}
-                  fill="var(--text-muted)"
-                  fontSize="10"
-                  textAnchor="end"
-                  fontFamily="var(--font-mono)"
-                >
-                  {level}%
-                </text>
-              </g>
-            );
-          })}
-
-          {/* X Axis Time Labels */}
-          {[0, Math.floor(maxSecond / 4), Math.floor(maxSecond / 2), Math.floor((maxSecond * 3) / 4), maxSecond].map((sec) => {
-            const x = getX(sec);
-            return (
-              <text
-                key={sec}
-                x={x}
-                y={svgHeight - 8}
-                fill="var(--text-muted)"
-                fontSize="10"
-                textAnchor="middle"
-                fontFamily="var(--font-mono)"
-              >
-                {sec}s
-              </text>
-            );
-          })}
-
-          {/* Area fill */}
-          {yourAreaPath && <path d={yourAreaPath} fill="url(#retentionGradientFill)" />}
-
-          {/* Top 1% Benchmark Line */}
-          {benchPath && (
-            <path
-              d={benchPath}
-              fill="none"
-              stroke="#10b981"
-              strokeWidth="2.5"
-              strokeDasharray="4,4"
-              opacity="0.85"
-            />
-          )}
-
-          {/* Your Video Line */}
-          {yourPath && (
-            <path
-              d={yourPath}
-              fill="none"
-              stroke="var(--brand-primary)"
-              strokeWidth="3.5"
-            />
-          )}
-
-          {/* Interactive Hover Circles & Line */}
-          {points.map((pt, i) => {
-            const x = getX(pt.second);
-            const y = getY(pt.retention);
-            return (
-              <circle
-                key={i}
-                cx={x}
-                cy={y}
-                r="5"
-                fill="var(--brand-primary)"
-                stroke="#fff"
-                strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'r 0.15s' }}
-                onMouseEnter={() => setHoveredPoint(pt)}
-                onMouseLeave={() => setHoveredPoint(null)}
-              />
-            );
-          })}
-
-          {/* Tooltip Overlay */}
-          {hoveredPoint && (
-            <g>
-              <line
-                x1={getX(hoveredPoint.second)}
-                y1={padding.top}
-                x2={getX(hoveredPoint.second)}
-                y2={getY(0)}
-                stroke="rgba(255, 255, 255, 0.3)"
-                strokeDasharray="2,2"
-              />
-              <rect
-                x={Math.min(getX(hoveredPoint.second) - 55, svgWidth - padding.right - 110)}
-                y={Math.max(getY(hoveredPoint.retention) - 45, 10)}
-                width="110"
-                height="36"
-                rx="6"
-                fill="#1e293b"
-                stroke="var(--brand-primary)"
-              />
-              <text
-                x={Math.min(getX(hoveredPoint.second), svgWidth - padding.right - 55)}
-                y={Math.max(getY(hoveredPoint.retention) - 24, 30)}
-                fill="#fff"
-                fontSize="11"
-                fontWeight="700"
-                textAnchor="middle"
-                fontFamily="var(--font-mono)"
-              >
-                t={hoveredPoint.second}s : {hoveredPoint.retention}%
-              </text>
-            </g>
-          )}
-        </svg>
-      </div>
-
-      {/* Timestamp Drop-off & Re-Hook Markers */}
-      <div className="retention-markers-timeline">
-        <h4 style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
-          Critical Timeline Drop-Off Points & Directives:
-        </h4>
-
-        {markers.map((marker, idx) => (
-          <div key={idx} className="dropzone-flag-item">
-            <span className="timestamp-badge">{marker.time}</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: '600', color: marker.type === 'warning' ? 'var(--brand-amber)' : 'var(--brand-emerald)' }}>
-                {marker.type === 'warning' ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
-                <span>{marker.title}</span>
-              </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.2rem' }}>
-                {marker.desc}
-              </p>
-            </div>
+      {points.length === 0 ? (
+        <div style={{
+          height: '220px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--bg-elevated)',
+          borderRadius: 'var(--radius-md)',
+          border: '1px dashed var(--border-medium)',
+          color: 'var(--text-muted)',
+          padding: '1.5rem',
+          textAlign: 'center',
+          gap: '0.65rem'
+        }}>
+          <Activity size={32} color="var(--brand-primary)" style={{ opacity: 0.8 }} />
+          <div style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '1rem' }}>
+            Retention Curve Awaiting Video Input
           </div>
-        ))}
-      </div>
+          <div style={{ fontSize: '0.825rem', maxWidth: '380px', color: 'var(--text-secondary)' }}>
+            Enter your video title, hook, or script in the form above to generate second-by-second dropoff curves and attention milestones.
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* SVG Retention Graph */}
+          <div className="retention-chart-svg-box">
+            <svg
+              viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+              style={{ width: '100%', height: '100%', overflow: 'visible' }}
+            >
+              <defs>
+                <linearGradient id="retentionGradientFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#6366f1" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+
+              {/* Grid lines */}
+              {[100, 75, 50, 25, 0].map((level) => {
+                const y = getY(level);
+                return (
+                  <g key={level}>
+                    <line
+                      x1={padding.left}
+                      y1={y}
+                      x2={svgWidth - padding.right}
+                      y2={y}
+                      stroke="rgba(255, 255, 255, 0.07)"
+                      strokeDasharray={level === 0 ? '0' : '4,4'}
+                    />
+                    <text
+                      x={padding.left - 10}
+                      y={y + 4}
+                      fill="var(--text-muted)"
+                      fontSize="10"
+                      textAnchor="end"
+                      fontFamily="var(--font-mono)"
+                    >
+                      {level}%
+                    </text>
+                  </g>
+                );
+              })}
+
+              {/* X Axis Time Labels */}
+              {[0, Math.floor(maxSecond / 4), Math.floor(maxSecond / 2), Math.floor((maxSecond * 3) / 4), maxSecond].map((sec) => {
+                const x = getX(sec);
+                return (
+                  <text
+                    key={sec}
+                    x={x}
+                    y={svgHeight - 8}
+                    fill="var(--text-muted)"
+                    fontSize="10"
+                    textAnchor="middle"
+                    fontFamily="var(--font-mono)"
+                  >
+                    {sec}s
+                  </text>
+                );
+              })}
+
+              {/* Area fill */}
+              {yourAreaPath && <path d={yourAreaPath} fill="url(#retentionGradientFill)" />}
+
+              {/* Top 1% Benchmark Line */}
+              {benchPath && (
+                <path
+                  d={benchPath}
+                  fill="none"
+                  stroke="#10b981"
+                  strokeWidth="2.5"
+                  strokeDasharray="4,4"
+                  opacity="0.85"
+                />
+              )}
+
+              {/* Your Video Line */}
+              {yourPath && (
+                <path
+                  d={yourPath}
+                  fill="none"
+                  stroke="var(--brand-primary)"
+                  strokeWidth="3.5"
+                />
+              )}
+
+              {/* Interactive Hover Circles & Line */}
+              {points.map((pt, i) => {
+                const x = getX(pt.second);
+                const y = getY(pt.retention);
+                return (
+                  <circle
+                    key={i}
+                    cx={x}
+                    cy={y}
+                    r="5"
+                    fill="var(--brand-primary)"
+                    stroke="#fff"
+                    strokeWidth="2"
+                    style={{ cursor: 'pointer', transition: 'r 0.15s' }}
+                    onMouseEnter={() => setHoveredPoint(pt)}
+                    onMouseLeave={() => setHoveredPoint(null)}
+                  />
+                );
+              })}
+
+              {/* Tooltip Overlay */}
+              {hoveredPoint && (
+                <g>
+                  <line
+                    x1={getX(hoveredPoint.second)}
+                    y1={padding.top}
+                    x2={getX(hoveredPoint.second)}
+                    y2={getY(0)}
+                    stroke="rgba(255, 255, 255, 0.3)"
+                    strokeDasharray="2,2"
+                  />
+                  <rect
+                    x={Math.min(getX(hoveredPoint.second) - 55, svgWidth - padding.right - 110)}
+                    y={Math.max(getY(hoveredPoint.retention) - 45, 10)}
+                    width="110"
+                    height="36"
+                    rx="6"
+                    fill="#1e293b"
+                    stroke="var(--brand-primary)"
+                  />
+                  <text
+                    x={Math.min(getX(hoveredPoint.second), svgWidth - padding.right - 55)}
+                    y={Math.max(getY(hoveredPoint.retention) - 24, 30)}
+                    fill="#fff"
+                    fontSize="11"
+                    fontWeight="700"
+                    textAnchor="middle"
+                    fontFamily="var(--font-mono)"
+                  >
+                    t={hoveredPoint.second}s : {hoveredPoint.retention}%
+                  </text>
+                </g>
+              )}
+            </svg>
+          </div>
+
+          {/* Timestamp Drop-off & Re-Hook Markers */}
+          <div className="retention-markers-timeline">
+            <h4 style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+              Critical Timeline Drop-Off Points & Directives:
+            </h4>
+
+            {markers.map((marker, idx) => (
+              <div key={idx} className="dropzone-flag-item">
+                <span className="timestamp-badge">{marker.time}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: '600', color: marker.type === 'warning' ? 'var(--brand-amber)' : 'var(--brand-emerald)' }}>
+                    {marker.type === 'warning' ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
+                    <span>{marker.title}</span>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                    {marker.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
