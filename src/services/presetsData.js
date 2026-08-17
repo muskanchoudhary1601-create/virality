@@ -1,0 +1,97 @@
+/**
+ * VIRALPULSE AI - PRESET BENCHMARK DATASETS
+ * Real-world scenarios for instant testing and demonstration.
+ */
+
+export const VIRAL_PRESETS = [
+  {
+    id: 'mrbeast-challenge',
+    name: '🚀 MrBeast-Style $100k Challenge',
+    category: 'Entertainment / YouTube Shorts',
+    platform: 'shorts',
+    duration: 38,
+    niche: 'Entertainment & Gaming',
+    targetAudience: 'Gen-Z & Gamers',
+    plannedHour: 17,
+    title: 'I Trapped 50 Strangers In A Giant Circle For $100,000!',
+    hook: 'The last person to step outside this red laser line wins $100,000 in cash right now!',
+    firstSecondsPrompt: 'Fast-paced drone zoom down to 50 people standing in a glowing red circle, MrBeast holding a briefcase of cash.',
+    script: 'The last person to leave this circle gets $100,000! At hour 12, we unleashed the giant foam balls. Look at Dave trying to jump over it! Only 3 people remain...',
+    caption: 'Who do you think made it to hour 48? Drop your guess below! 👇 #shorts #challenge #mrbeast #100k',
+    hashtags: '#shorts, #challenge, #mrbeast, #100k, #viral, #entertainment',
+    videoUrl: 'https://youtube.com/shorts/sample-mrbeast-challenge',
+    audioTrendScore: 95
+  },
+  {
+    id: 'tiktok-skincare-hack',
+    name: '💄 Viral Korean "Glass Skin" Hack',
+    category: 'Beauty & Lifestyle / TikTok',
+    platform: 'tiktok',
+    duration: 28,
+    niche: 'Beauty & Skincare',
+    targetAudience: 'Women 18-34, Beauty Enthusiasts',
+    plannedHour: 19,
+    title: 'Stop Buying Expensive Serums! The 1 Korean Drugstore Secret',
+    hook: 'Dermatologists are furious about this $7 Korean skincare hack nobody talks about.',
+    firstSecondsPrompt: 'Extreme close up of glowing glass skin texture with before/after split screen in first 1.5 seconds.',
+    script: 'Stop spending $80 on hyaluronic serums. In Seoul pharmacies, everyone uses this $7 rice essence technique. Step 1: Apply to damp skin immediately after cleansing...',
+    caption: 'Save this before it gets sold out everywhere! Have you tried the double layering method? 💧✨ #kbeauty #glassskin #skintok #skincarehacks',
+    hashtags: '#kbeauty, #glassskin, #skintok, #skincarehacks, #fyp, #beautytips',
+    videoUrl: 'https://tiktok.com/@beautylab/video/glass-skin-hack',
+    audioTrendScore: 92
+  },
+  {
+    id: 'tech-founder-story',
+    name: '💡 Tech Founder "Fired to $10M" Story',
+    category: 'Business & Tech / Instagram Reel',
+    platform: 'reels',
+    duration: 52,
+    niche: 'Business & Tech',
+    targetAudience: 'Entrepreneurs, Tech Professionals, Solopreneurs',
+    plannedHour: 12,
+    title: 'I Got Fired at 24. 3 Years Later We Crossed $10,000,000.',
+    hook: 'Getting fired on a random Tuesday was the best thing that ever happened to my bank account.',
+    firstSecondsPrompt: 'Founder sitting in a modern studio holding the severance email on iPhone, transitioning to team building screen.',
+    script: 'In 2023, my boss told me my role was redundant. Instead of sending 500 resumes, I coded a simple micro-SaaS tool in 48 hours. Here are the 3 non-obvious growth levers that scaled it to 8 figures...',
+    caption: 'Comment "BLUEPRINT" and I will DM you the exact tech stack we used to scale with zero VC funding. 🚀📈 #entrepreneur #startuplife #saas #businessgrowth',
+    hashtags: '#entrepreneur, #startuplife, #saas, #businessgrowth, #techfounder, #solopreneur',
+    videoUrl: 'https://instagram.com/reels/tech-founder-story-10m',
+    audioTrendScore: 78
+  },
+  {
+    id: 'gym-pr-motivation',
+    name: '🏋️‍♂️ 500lb Deadlift PR Motivation',
+    category: 'Fitness & Health / YouTube Shorts',
+    platform: 'shorts',
+    duration: 32,
+    niche: 'Fitness & Health',
+    targetAudience: 'Gymgoers, Athletes, Bodybuilders',
+    plannedHour: 18,
+    title: 'They Told Me I Could Never Lift 500lbs After My Surgery',
+    hook: 'Doctors told me I would never deadlift again after tearing my L4 disc.',
+    firstSecondsPrompt: 'Heavy breathing audio, chalk flying in slow motion, barbell bending with dramatic heavy orchestral beat drop.',
+    script: '14 months ago I was in a hospital bed. Everyone told me to quit heavy lifting. Today we put 500 pounds on the bar. Watch this...',
+    caption: 'Never let someone else define your limits. Tag your gym partner who needs to see this today! 😤💥 #gymmotivation #deadlift #fitness #nevergiveup',
+    hashtags: '#gymmotivation, #deadlift, #fitness, #nevergiveup, #gymtok, #shorts',
+    videoUrl: 'https://youtube.com/shorts/deadlift-pr-comeback',
+    audioTrendScore: 88
+  },
+  {
+    id: 'low-retention-flop',
+    name: '📉 Low-Retention Flop (Before vs After Demo)',
+    category: 'Vlog / Underperforming Example',
+    platform: 'shorts',
+    duration: 85,
+    niche: 'Lifestyle & Vlogs',
+    targetAudience: 'General Audience',
+    plannedHour: 3,
+    title: 'My Daily Morning Routine and Coffee Vlog',
+    hook: 'Hey guys, welcome back to another video. Today I am going to show you my morning routine.',
+    firstSecondsPrompt: 'Slow pan of a coffee cup on a table with silent background and no text overlay for 5 seconds.',
+    script: 'So first I woke up at around 7:30. Then I brushed my teeth and went into the kitchen to make some pour over coffee. It took about 10 minutes...',
+    caption: 'Hope you guys enjoyed this video! Like and subscribe for more daily videos! #vlog #morningroutine',
+    hashtags: '#vlog, #morningroutine, #daily',
+    videoUrl: 'https://youtube.com/shorts/morning-routine-vlog-sample',
+    audioTrendScore: 40
+  }
+];
