@@ -21,25 +21,25 @@ export default function App() {
   const [theme, setTheme] = useState('dark');
 
   // Active Preset & Form Data State (Shared across all pages)
-  const [activePresetId, setActivePresetId] = useState(VIRAL_PRESETS[0].id);
+  const [activePresetId, setActivePresetId] = useState(null);
 
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
   const [videoUrl, setVideoUrl] = useState('');
 
   const [formData, setFormData] = useState({
-    title: VIRAL_PRESETS[0].title,
-    hook: VIRAL_PRESETS[0].hook,
-    firstSecondsPrompt: VIRAL_PRESETS[0].firstSecondsPrompt,
-    script: VIRAL_PRESETS[0].script,
-    caption: VIRAL_PRESETS[0].caption,
-    hashtags: VIRAL_PRESETS[0].hashtags,
-    platform: VIRAL_PRESETS[0].platform,
-    duration: VIRAL_PRESETS[0].duration,
-    niche: VIRAL_PRESETS[0].niche,
-    targetAudience: VIRAL_PRESETS[0].targetAudience,
-    plannedHour: VIRAL_PRESETS[0].plannedHour,
-    audioTrendScore: VIRAL_PRESETS[0].audioTrendScore
+    title: '',
+    hook: '',
+    firstSecondsPrompt: '',
+    script: '',
+    caption: '',
+    hashtags: '',
+    platform: 'shorts',
+    duration: 30,
+    niche: 'Business & Tech',
+    targetAudience: '',
+    plannedHour: 18,
+    audioTrendScore: 50
   });
 
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -54,6 +54,7 @@ export default function App() {
   };
 
   const handleFieldChange = (field, value) => {
+    setActivePresetId(null);
     setFormData(prev => ({
       ...prev,
       [field]: value

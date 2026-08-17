@@ -3,12 +3,8 @@ import { Split, Trophy, Sparkles, CheckCircle2, ArrowRight, Activity, Zap } from
 import { analyzeHookStrength } from '../services/viralityEngine';
 
 export default function AbTestingPage({ defaultHook }) {
-  const [hookA, setHookA] = useState(
-    defaultHook || 'The 3 mistakes you are making with your daily routine.'
-  );
-  const [hookB, setHookB] = useState(
-    'Why 99% of people fail their daily routine (And the 1 trick that fixes it).'
-  );
+  const [hookA, setHookA] = useState(defaultHook || '');
+  const [hookB, setHookB] = useState('');
 
   const scoreA = analyzeHookStrength(hookA);
   const scoreB = analyzeHookStrength(hookB);

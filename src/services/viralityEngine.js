@@ -27,7 +27,7 @@ const EMOTIONAL_TRIGGERS = {
  * Calculates Hook Strength Score (0-100)
  */
 export function analyzeHookStrength(hookText = '', firstSecondsPrompt = '') {
-  if (!hookText && !firstSecondsPrompt) return 60;
+  if (!hookText && !firstSecondsPrompt) return 40;
   
   const text = (hookText + ' ' + firstSecondsPrompt).toLowerCase();
   let score = 50; // baseline

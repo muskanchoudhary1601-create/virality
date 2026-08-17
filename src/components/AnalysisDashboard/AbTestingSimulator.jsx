@@ -3,12 +3,8 @@ import { Split, Sparkles, Trophy, ArrowRight, Zap, CheckCircle2 } from 'lucide-r
 import { analyzeHookStrength } from '../../services/viralityEngine';
 
 export default function AbTestingSimulator({ currentHook, title }) {
-  const [variantA, setVariantA] = useState(
-    currentHook || 'The 3 mistakes you are making with your daily routine.'
-  );
-  const [variantB, setVariantB] = useState(
-    'Why 99% of people fail their daily routine (And the 1 trick that fixes it).'
-  );
+  const [variantA, setVariantA] = useState(currentHook || '');
+  const [variantB, setVariantB] = useState('');
 
   const scoreA = analyzeHookStrength(variantA);
   const scoreB = analyzeHookStrength(variantB);

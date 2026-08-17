@@ -42,7 +42,7 @@ const HOOK_LIBRARY_TEMPLATES = [
 ];
 
 export default function HookDoctorPage({ activeHook, onUpdateHook }) {
-  const [testHook, setTestHook] = useState(activeHook || 'Why nobody in your niche is talking about this 1 secret...');
+  const [testHook, setTestHook] = useState(activeHook || '');
   const [copiedText, setCopiedText] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
 
