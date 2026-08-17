@@ -170,8 +170,8 @@ export default function RetentionSimulatorPage({ duration = 45, hookScore = 80 }
             Place attention anchors along your video to interrupt monotony and reset viewer attention:
           </p>
 
-          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: '160px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', alignItems: 'flex-end' }}>
+            <div style={{ minWidth: '140px' }}>
               <label className="form-label" style={{ marginBottom: '0.35rem' }}>Edit Type</label>
               <select
                 className="select-control"
@@ -186,8 +186,8 @@ export default function RetentionSimulatorPage({ duration = 45, hookScore = 80 }
               </select>
             </div>
 
-            <div style={{ width: '130px' }}>
-              <label className="form-label" style={{ marginBottom: '0.35rem' }}>Timestamp</label>
+            <div>
+              <label className="form-label" style={{ marginBottom: '0.35rem' }}>Timestamp (sec)</label>
               <input
                 type="number"
                 className="input-control"
@@ -198,11 +198,12 @@ export default function RetentionSimulatorPage({ duration = 45, hookScore = 80 }
               />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div>
               <button
                 type="button"
                 className="btn btn-primary"
                 onClick={handleAddCut}
+                style={{ width: '100%', height: '42px' }}
               >
                 <Plus size={16} />
                 <span>Add Cue</span>

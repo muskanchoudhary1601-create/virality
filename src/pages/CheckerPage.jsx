@@ -134,7 +134,7 @@ export default function CheckerPage({
       {/* Analysis Output Dashboard */}
       <div style={{ marginTop: '3rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <div className="scroll-horizontal" style={{ display: 'flex', gap: '0.5rem', paddingBottom: '0.25rem' }}>
             <button
               className={`preset-chip ${activeDashboardTab === 'all' ? 'active' : ''}`}
               onClick={() => setActiveDashboardTab('all')}

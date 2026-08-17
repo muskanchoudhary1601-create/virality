@@ -64,9 +64,9 @@ export default function HookDoctorStudio({
                 </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: '700', color: 'var(--brand-emerald)' }}>
-                  Predicted Hook: {item.predictedHookScore}/100
+                  Score: {item.predictedHookScore}/100
                 </span>
                 <button
                   type="button"
@@ -89,7 +89,7 @@ export default function HookDoctorStudio({
                   }}
                 >
                   <Zap size={14} />
-                  <span>Apply & Re-Score</span>
+                  <span>Apply</span>
                 </button>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function HookDoctorStudio({
           <span>Test Your Own Custom Hook in Sandbox</span>
         </h4>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="url-input-container">
           <input
             type="text"
             className="input-control"
@@ -136,6 +136,7 @@ export default function HookDoctorStudio({
             onClick={() => {
               if (customInput.trim()) onTestCustomHook(customInput);
             }}
+            style={{ whiteSpace: 'nowrap' }}
           >
             <span>Test Hook</span>
             <ArrowRight size={16} />

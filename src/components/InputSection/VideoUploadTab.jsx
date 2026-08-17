@@ -63,7 +63,7 @@ export default function VideoUploadTab({
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: '1.5rem' }}>
+        <div className="video-upload-grid">
           {/* Video Preview Player */}
           <div style={{ position: 'relative' }}>
             <div className="video-preview-wrapper">

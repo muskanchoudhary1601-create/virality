@@ -85,7 +85,7 @@ export default function ExportReportModal({ isOpen, onClose, analysis }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.75rem', color: '#64748b' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.75rem', color: '#64748b', flexWrap: 'wrap', gap: '0.4rem' }}>
             <span>Platform: {metadata.platform.toUpperCase()} ({metadata.niche})</span>
             <span>https://viralpulse.ai</span>
           </div>
@@ -93,11 +93,11 @@ export default function ExportReportModal({ isOpen, onClose, analysis }) {
 
         {/* Action Buttons */}
         <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-          <button className="btn btn-secondary" onClick={handleCopy}>
+          <button className="btn btn-secondary" onClick={handleCopy} style={{ flex: '1 1 auto' }}>
             {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
             <span>{copied ? 'Summary Copied!' : 'Copy Summary'}</span>
           </button>
-          <button className="btn btn-primary" onClick={() => downloadJsonReport(analysis)}>
+          <button className="btn btn-primary" onClick={() => downloadJsonReport(analysis)} style={{ flex: '1 1 auto' }}>
             <Download size={16} />
             <span>Download Audit (.JSON)</span>
           </button>

@@ -44,7 +44,7 @@ export default function UrlParserTab({
           )}
         </label>
         
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="url-input-container">
           <div style={{ position: 'relative', flex: 1 }}>
             <input
               type="url"

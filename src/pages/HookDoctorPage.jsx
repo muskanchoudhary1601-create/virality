@@ -269,10 +269,11 @@ export default function HookDoctorPage({ activeHook, onUpdateHook }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: '0.75rem'
+                  gap: '0.75rem',
+                  flexWrap: 'wrap'
                 }}
               >
-                <div>
+                <div style={{ flex: 1, minWidth: '200px' }}>
                   <span className="badge badge-solid" style={{ fontSize: '0.65rem', marginBottom: '0.2rem' }}>
                     {item.niche}
                   </span>
@@ -281,7 +282,7 @@ export default function HookDoctorPage({ activeHook, onUpdateHook }) {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
                   <button
                     type="button"
                     className="btn btn-secondary btn-sm"
